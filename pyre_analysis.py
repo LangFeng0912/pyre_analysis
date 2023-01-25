@@ -38,16 +38,16 @@ def process_project(project_path, tar_path):
     project_files = [(f, str(Path(f).relative_to(Path(project_path).parent))) for f in project_files]
 
     if len(project_files) != 0:
-        # print(f'Running pyre query for project {project_path}')
+        print(f'Running pyre query for project {project_path}')
         for filename, f_relative in project_files:
             pyre_data_file = pyre_util.pyre_query_types(project_path, filename)
             # extract types
-            project_analyzed_files[project_id]["src_files"][f_relative] = \
+            project_analyzed_files[project_id]["src_files"][filename] = \
                 Extractor.extract(read_file(filename), pyre_data_file).to_dict()
             # extract available types
-            extracted_avl_types = project_analyzed_files[project_id]["src_files"][f_relative]['imports'] + \
+            extracted_avl_types = project_analyzed_files[project_id]["src_files"][filename]['imports'] + \
                                   [c['name'] for c in
-                                   project_analyzed_files[project_id]["src_files"][f_relative]['classes']]
+                                   project_analyzed_files[project_id]["src_files"][filename]['classes']]
 
     print(f'Saving available type hints for {project_id}...')
     processed_project_dir, avl_types_dir = prep_tar(tar_path)
